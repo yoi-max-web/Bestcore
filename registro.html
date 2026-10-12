@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crear cuenta | Pre-ICFES Bestscore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="48" fill="#0F2642" stroke="#C59B63" stroke-width="3"/>
+    <path d="M50 12 54 25 67 29 54 33 50 46 46 33 33 29 46 25Z" fill="#D4AF37" transform="translate(0 2)"/>
+    <path d="M50 58C42 50 30 49 22 51V37C32 35 44 37 50 44Z" fill="#fff"/>
+    <path d="M50 58C58 50 70 49 78 51V37C68 35 56 37 50 44Z" fill="#F1ECE2"/>
+    <path d="M17 38v26c14-1 26 3 33 12 7-9 19-13 33-12V38" fill="none" stroke="#C59B63" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -2)"/>
+  </symbol>
+</svg>
+
+<main class="auth-page">
+  <aside class="auth-aside">
+    <a class="brand" href="index.html"><svg aria-hidden="true"><use href="#logo"/></svg><span>Best<b>score</b><small>PRE-ICFES</small></span></a>
+    <h1>Crea tu cuenta y mide tu nivel</h1>
+    <p>Cuéntanos un poco sobre ti para preparar tu ruta hacia el ICFES.</p>
+    <ul>
+      <li>Simulacro gratis al registrarte</li>
+      <li>Resultados por área</li>
+      <li>Plan de repaso según tus errores</li>
+    </ul>
+  </aside>
+
+  <section class="auth-main">
+    <a class="brand brand-mobile" href="index.html"><svg aria-hidden="true"><use href="#logo"/></svg><span>Best<b>score</b><small>PRE-ICFES</small></span></a>
+    <div class="auth-card">
+      <h2>Crear cuenta</h2>
+      <p class="sub">Completa tus datos para empezar a practicar.</p>
+
+      <form data-form="registro" novalidate>
+        <div class="fields cols">
+          <div class="field">
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" required>
+            <small class="err" id="err-nombre"></small>
+          </div>
+          <div class="field">
+            <label for="edad">Edad</label>
+            <input id="edad" name="edad" type="number" inputmode="numeric" min="10" max="99" placeholder="Ej. 16" required>
+            <small class="err" id="err-edad"></small>
+          </div>
+          <div class="field">
+            <label for="departamento">Departamento</label>
+            <select id="departamento" name="departamento" required>
+              <option value="">Selecciona…</option>
+            </select>
+            <small class="err" id="err-departamento"></small>
+          </div>
+          <div class="field">
+            <label for="ciudad">Ciudad o municipio</label>
+            <input id="ciudad" name="ciudad" type="text" autocomplete="address-level2" placeholder="Ej. Barranquilla" required>
+            <small class="err" id="err-ciudad"></small>
+          </div>
+          <div class="field full">
+            <label for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" required>
+            <small class="err" id="err-email"></small>
+          </div>
+          <fieldset class="field full">
+            <legend>Calendario del ICFES que presentarás</legend>
+            <div class="cal">
+              <label class="opt"><input type="radio" name="calendario" value="A"><span><b>Calendario A</b><small>Año escolar de febrero a noviembre</small></span></label>
+              <label class="opt"><input type="radio" name="calendario" value="B"><span><b>Calendario B</b><small>Año escolar de agosto a junio</small></span></label>
+            </div>
+            <small class="err" id="err-calendario"></small>
+          </fieldset>
+          <div class="field">
+            <label for="password">Contraseña</label>
+            <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres" required>
+            <small class="err" id="err-password"></small>
+          </div>
+          <div class="field">
+            <label for="confirmar">Confirmar contraseña</label>
+            <input id="confirmar" name="confirmar" type="password" autocomplete="new-password" placeholder="Repítela" required>
+            <small class="err" id="err-confirmar"></small>
+          </div>
+          <div class="field full">
+            <label class="check"><input type="checkbox" name="terminos"><span>Acepto los <a href="#">términos y condiciones</a> y la política de privacidad.</span></label>
+            <small class="err" id="err-terminos"></small>
+          </div>
+        </div>
+        <p class="msg" id="msg" role="alert" aria-live="polite"></p>
+        <button class="btn btn-gold" type="submit">Crear cuenta</button>
+      </form>
+
+      <p class="switch">¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></p>
+    </div>
+  </section>
+</main>
+<script src="auth.js" defer></script>
+</body>
+</html>

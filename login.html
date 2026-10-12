@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iniciar sesión | Pre-ICFES Bestscore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="48" fill="#0F2642" stroke="#C59B63" stroke-width="3"/>
+    <path d="M50 12 54 25 67 29 54 33 50 46 46 33 33 29 46 25Z" fill="#D4AF37" transform="translate(0 2)"/>
+    <path d="M50 58C42 50 30 49 22 51V37C32 35 44 37 50 44Z" fill="#fff"/>
+    <path d="M50 58C58 50 70 49 78 51V37C68 35 56 37 50 44Z" fill="#F1ECE2"/>
+    <path d="M17 38v26c14-1 26 3 33 12 7-9 19-13 33-12V38" fill="none" stroke="#C59B63" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -2)"/>
+  </symbol>
+</svg>
+
+<main class="auth-page">
+  <aside class="auth-aside">
+    <a class="brand" href="index.html"><svg aria-hidden="true"><use href="#logo"/></svg><span>Best<b>score</b><small>PRE-ICFES</small></span></a>
+    <h1>Tu mejor puntaje empieza aquí</h1>
+    <p>Entra a tu cuenta y sigue practicando donde lo dejaste.</p>
+    <ul>
+      <li>Simulacros con formato real</li>
+      <li>Retroalimentación por pregunta</li>
+      <li>Seguimiento de tu progreso</li>
+    </ul>
+  </aside>
+
+  <section class="auth-main">
+    <a class="brand brand-mobile" href="index.html"><svg aria-hidden="true"><use href="#logo"/></svg><span>Best<b>score</b><small>PRE-ICFES</small></span></a>
+    <div class="auth-card">
+      <h2>Iniciar sesión</h2>
+      <p class="sub">Ingresa con el correo con el que te registraste.</p>
+
+      <form data-form="login" novalidate>
+        <div class="fields">
+          <div class="field">
+            <label for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" required>
+            <small class="err" id="err-email"></small>
+          </div>
+          <div class="field">
+            <label for="password">Contraseña</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+            <small class="err" id="err-password"></small>
+          </div>
+        </div>
+        <button type="button" class="link" id="olvide">¿Olvidaste tu contraseña?</button>
+        <p class="msg" id="msg" role="alert" aria-live="polite"></p>
+        <button class="btn btn-gold" type="submit">Iniciar sesión</button>
+      </form>
+
+      <p class="switch">¿Aún no tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
+    </div>
+  </section>
+</main>
+<script src="auth.js" defer></script>
+</body>
+</html>
