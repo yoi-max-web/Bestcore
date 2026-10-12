@@ -1,47 +1,62 @@
 /* =====================================================
-   auth.js — login.html y registro.html
-   Validación del formulario + funciones listas para Firebase
+   auth.js — login.html y registro.html (Firebase Auth + Firestore)
+   Requiere firebase-config.js y cargarse con type="module"
    ===================================================== */
+import { auth, db } from './firebase-config.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo, deleteUser, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const RUTAS = {
-  despuesDeLogin: 'index.html',   // TODO: cambia por tu panel (ej. 'dashboard.html')
-  despuesDeRegistro: 'login.html'
+  despuesDeLogin: 'perfil.html',
+  despuesDeRegistro: 'perfil.html'
 };
+
+let enProceso = false; // evita redirigir antes de terminar de guardar el perfil
+auth.languageCode = 'es';  // el correo de recuperación llega en español
 
 const DEPARTAMENTOS = ['Amazonas','Antioquia','Arauca','Atlántico','Bogotá D.C.','Bolívar','Boyacá','Caldas','Caquetá','Casanare','Cauca','Cesar','Chocó','Córdoba','Cundinamarca','Guainía','Guaviare','Huila','La Guajira','Magdalena','Meta','Nariño','Norte de Santander','Putumayo','Quindío','Risaralda','San Andrés y Providencia','Santander','Sucre','Tolima','Valle del Cauca','Vaupés','Vichada'];
 
-/* =====================================================
-   FIREBASE — AQUÍ CONECTAS TU LÓGICA
-   Descomenta e importa el SDK cuando lo tengas listo:
-   import { initializeApp } from 'firebase/app';
-   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-            sendPasswordResetEmail, updateProfile } from 'firebase/auth';
-   import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
-   ===================================================== */
-
-// Debe devolver { ok: true } o { ok: false, error: 'mensaje' }
+// Debe devolver { ok: true } o lanzar un error (los de Firebase traen .code)
 async function iniciarSesion({ email, password }) {
-  // TODO Firebase:
-  // await signInWithEmailAndPassword(auth, email, password);
-  console.log('[DEMO] Iniciar sesión con:', email);
+  await signInWithEmailAndPassword(auth, email, password);
   return { ok: true };
 }
 
 async function crearCuenta(datos) {
-  // La contraseña va solo a Firebase Auth; nunca la guardes en Firestore.
+  // La contraseña va solo a Firebase Auth; nunca se guarda en Firestore.
   const { password, confirmar, terminos, ...perfil } = datos;
-  // perfil = { nombre, edad, departamento, ciudad, email, calendario }
-  // TODO Firebase:
-  // const cred = await createUserWithEmailAndPassword(auth, perfil.email, password);
-  // await updateProfile(cred.user, { displayName: perfil.nombre });
-  // await setDoc(doc(db, 'usuarios', cred.user.uid), { ...perfil, edad: Number(perfil.edad), creadoEn: serverTimestamp() });
-  console.log('[DEMO] Crear cuenta con perfil:', perfil);
+  const cred = await createUserWithEmailAndPassword(auth, perfil.email, password);
+  await updateProfile(cred.user, { displayName: perfil.nombre });
+  await setDoc(doc(db, 'usuarios', cred.user.uid), {
+    ...perfil,                       // nombre, edad, departamento, ciudad, email, calendario
+    edad: Number(perfil.edad),
+    creadoEn: serverTimestamp()
+  });
+  return { ok: true };
+}
+
+async function iniciarConGoogle() {
+  const proveedor = new GoogleAuthProvider();
+  proveedor.setCustomParameters({ prompt: 'select_account' });   // siempre deja elegir la cuenta
+  const cred = await signInWithPopup(auth, proveedor);
+  const user = cred.user;
+  // Firebase crea la cuenta sola si el correo es nuevo. Aquí no lo permitimos:
+  // si es nueva, la borramos y avisamos que debe registrarse primero.
+  if (getAdditionalUserInfo(cred)?.isNewUser) {
+    try { await deleteUser(user); } catch { await signOut(auth); }
+    const e = new Error('no-registrado');
+    e.code = 'app/no-registrado';
+    throw e;
+  }
+  const ref = doc(db, 'usuarios', user.uid);
+  if (!(await getDoc(ref)).exists()) {   // cuenta existente sin perfil → crea el perfil básico
+    await setDoc(ref, { nombre: user.displayName || '', email: user.email, perfilCompleto: false, creadoEn: serverTimestamp() });
+  }
   return { ok: true };
 }
 
 async function recuperarContrasena(email) {
-  // TODO Firebase: await sendPasswordResetEmail(auth, email);
-  console.log('[DEMO] Recuperar contraseña para:', email);
+  await sendPasswordResetEmail(auth, email);
   return { ok: true };
 }
 
@@ -54,7 +69,12 @@ function traducirErrorFirebase(code) {
     'auth/email-already-in-use': 'Ese correo ya está registrado.',
     'auth/weak-password': 'La contraseña es muy débil.',
     'auth/too-many-requests': 'Demasiados intentos. Inténtalo más tarde.',
-    'auth/network-request-failed': 'Sin conexión. Revisa tu internet.'
+    'auth/network-request-failed': 'Sin conexión. Revisa tu internet.',
+    'auth/popup-blocked': 'El navegador bloqueó la ventana. Permite las ventanas emergentes.',
+    'auth/account-exists-with-different-credential': 'Ese correo ya está registrado con otro método.',
+    'auth/unauthorized-domain': 'Este dominio no está autorizado en Firebase.',
+    'app/no-registrado': 'Ese correo no está registrado. Crea tu cuenta primero.',
+    'permission-denied': 'Sin permiso para guardar tus datos. Revisa las reglas de Firestore.'
   };
   return m[code] || 'Ocurrió un error. Inténtalo de nuevo.';
 }
@@ -125,30 +145,87 @@ if (form) {
 
     const textoBoton = boton.textContent;
     boton.disabled = true;
+    enProceso = true;
     boton.textContent = 'Procesando…';
     mensaje('');
 
     try {
       const r = tipo === 'login' ? await iniciarSesion(datos) : await crearCuenta(datos);
       if (!r.ok) throw new Error(r.error);
-      mensaje(tipo === 'login' ? '¡Bienvenido de nuevo!' : '¡Cuenta creada! Ahora inicia sesión.', 'ok');
+      mensaje(tipo === 'login' ? '¡Bienvenido de nuevo!' : '¡Cuenta creada! Entrando a tu perfil…', 'ok');
       setTimeout(() => { location.href = tipo === 'login' ? RUTAS.despuesDeLogin : RUTAS.despuesDeRegistro; }, 900);
     } catch (err) {
       mensaje(err.code ? traducirErrorFirebase(err.code) : (err.message || 'Ocurrió un error. Inténtalo de nuevo.'), 'bad');
+      enProceso = false;
       boton.disabled = false;
       boton.textContent = textoBoton;
     }
   });
 
-  // "¿Olvidaste tu contraseña?" (solo existe en login.html)
-  document.getElementById('olvide')?.addEventListener('click', async () => {
-    const email = form.email.value.trim().toLowerCase();
-    if (!reEmail.test(email)) { marcar('email', 'Escribe tu correo para enviarte el enlace.'); form.email.focus(); return; }
+  // "Continuar con Google" (solo existe en login.html)
+  document.getElementById('google')?.addEventListener('click', async () => {
+    enProceso = true;
     try {
-      await recuperarContrasena(email);
-      mensaje('Si el correo está registrado, te enviaremos un enlace para restablecerla.', 'ok');
+      await iniciarConGoogle();
+      mensaje('¡Bienvenido!', 'ok');
+      setTimeout(() => { location.href = RUTAS.despuesDeLogin; }, 600);
     } catch (err) {
-      mensaje(traducirErrorFirebase(err.code), 'bad');
+      enProceso = false;
+      if (!['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(err.code)) mensaje(traducirErrorFirebase(err.code), 'bad');
     }
   });
+
+  // "¿Olvidaste tu contraseña?" → modal (solo existe en login.html)
+  const modal = document.getElementById('modal-recuperar');
+  if (modal) {
+    const formRec = document.getElementById('form-recuperar');
+    const inRec = document.getElementById('rec-email');
+    const errRec = document.getElementById('err-rec');
+    const msgRec = document.getElementById('rec-msg');
+    const btnRec = document.getElementById('rec-enviar');
+    const msgR = (t, c = '') => { msgRec.textContent = t; msgRec.className = 'msg ' + c; };
+
+    const abrir = () => {
+      inRec.value = form.email.value.trim();   // reutiliza el correo ya escrito
+      errRec.textContent = ''; msgR('');
+      modal.hidden = false;
+      inRec.focus();
+    };
+    const cerrar = () => { modal.hidden = true; document.getElementById('olvide').focus(); };
+
+    document.getElementById('olvide').addEventListener('click', abrir);
+    document.getElementById('rec-cerrar').addEventListener('click', cerrar);
+    modal.addEventListener('click', e => { if (e.target === modal) cerrar(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) cerrar(); });
+
+    formRec.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const email = inRec.value.trim().toLowerCase();
+      errRec.textContent = ''; msgR('');
+      if (!reEmail.test(email)) { errRec.textContent = 'Escribe un correo válido.'; inRec.focus(); return; }
+      btnRec.disabled = true; btnRec.textContent = 'Enviando…';
+      try {
+        await recuperarContrasena(email);
+        msgR('Si el correo está registrado, te enviamos un enlace. Revisa también tu carpeta de spam.', 'ok');
+      } catch (err) {
+        msgR(traducirErrorFirebase(err.code), 'bad');
+      } finally {
+        btnRec.disabled = false; btnRec.textContent = 'Enviar enlace';
+      }
+    });
+  }
 }
+
+// Si ya hay una sesión abierta, manda al usuario directo a su perfil
+onAuthStateChanged(auth, user => {
+  if (user && form && !enProceso) location.replace(RUTAS.despuesDeLogin);
+});
+
+// Ojo para mostrar / ocultar contraseña
+document.querySelectorAll('.eye').forEach(b => b.addEventListener('click', () => {
+  const input = b.previousElementSibling;
+  const ver = input.type === 'password';
+  input.type = ver ? 'text' : 'password';
+  b.setAttribute('aria-pressed', ver);
+  b.setAttribute('aria-label', ver ? 'Ocultar contraseña' : 'Mostrar contraseña');
+}));

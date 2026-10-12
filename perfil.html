@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi perfil | Pre-ICFES Bestscore</title>
+<link rel="icon" href="imgs/BSlogo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="perfil.css">
+</head>
+<body class="perfil">
+<header class="scrolled">
+  <div class="wrap">
+    <nav class="nav" aria-label="Perfil">
+      <a class="brand" href="index.html"><img src="imgs/BSlogo.png" alt="" width="42" height="42"><span>Best<b>score</b><small>PRE-ICFES</small></span></a>
+      <div class="pf-actions">
+        <a class="btn btn-line" href="index.html">Inicio</a>
+        <button class="btn btn-gold" id="salir" type="button">Cerrar sesión</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<p class="pf-loading" id="cargando" role="status">Cargando tu perfil…</p>
+
+<main class="pf" id="pf" hidden>
+  <div class="wrap">
+    <section class="pf-hero">
+      <div class="avatar" id="avatar" aria-hidden="true">?</div>
+      <div>
+        <p class="eyebrow">Tu perfil</p>
+        <h1>Hola, <span data-campo="primerNombre"></span></h1>
+        <p class="lead">Te estás preparando para el Calendario <span data-campo="calendario"></span>.</p>
+      </div>
+    </section>
+
+    <section class="pf-grid" aria-label="Resumen">
+      <div class="stat"><span>Simulacros presentados</span><b>0</b></div>
+      <div class="stat"><span>Último puntaje</span><b>—</b></div>
+      <div class="stat"><span>Calendario ICFES</span><b data-campo="calendario"></b></div>
+    </section>
+
+    <section class="pf-card">
+      <h2>Tus datos</h2>
+      <dl class="pf-data">
+        <div><dt>Nombre</dt><dd data-campo="nombre"></dd></div>
+        <div><dt>Correo</dt><dd data-campo="email"></dd></div>
+        <div><dt>Edad</dt><dd data-campo="edad"></dd></div>
+        <div><dt>Ubicación</dt><dd data-campo="ubicacion"></dd></div>
+      </dl>
+    </section>
+
+    <a class="btn btn-gold pf-cta" href="index.html#simulacros">Ver simulacros</a>
+  </div>
+</main>
+
+<script type="module" src="perfil.js"></script>
+</body>
+</html>

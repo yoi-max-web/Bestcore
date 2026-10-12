@@ -139,3 +139,7 @@ img,svg,video{max-width:100%}
 @media(max-width:380px){.brand{font-size:1rem}.brand svg{width:36px;height:36px}.btn{padding:12px 20px}.wrap{width:calc(100% - 28px)}}
 @media(max-height:500px) and (orientation:landscape){#inicio{padding-top:100px}}
 @media(min-width:1600px){html{font-size:112.5%}.wrap{width:min(1280px,100% - 80px)}}
+
+/* ===== LOGO (imagen) ===== */
+.brand img{width:42px;height:42px;object-fit:contain;border-radius:50%;flex:none}
+@media(max-width:380px){.brand img{width:36px;height:36px}}

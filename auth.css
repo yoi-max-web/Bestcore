@@ -57,3 +57,40 @@ input:focus,select:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px
  .auth-aside ul{list-style:none;padding:0;display:grid;gap:12px}
  .auth-aside li::before{content:"✦";color:var(--gold);margin-right:10px}
 }
+
+/* Ojo para ver contraseña */
+.pw{position:relative}
+.pw input{padding-right:50px}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;display:grid;place-items:center;background:none;border:0;border-radius:10px;color:var(--muted);cursor:pointer;transition:.25s}
+.eye:hover{color:var(--gold)}
+.eye svg{width:22px;height:22px}
+.eye .off,.eye[aria-pressed="true"] .on{display:none}
+.eye[aria-pressed="true"] .off{display:block}
+/* Edad sin flechas */
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+/* Recuperar contraseña y Google */
+.link{display:block;margin-left:auto}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:18px 0 12px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.btn-google{background:#fff;color:#1f1f1f;border-color:#fff;margin-top:0}
+.btn-google:hover{background:#f1f1f1;transform:translateY(-2px)}
+/* Flecha para volver al inicio */
+.back{position:absolute;top:max(16px,env(safe-area-inset-top));left:16px;z-index:5;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px 8px 10px;border-radius:999px;color:var(--white);font-weight:800;font-size:.92rem;background:rgba(255,255,255,.06);border:1px solid var(--line);transition:.25s}
+.back svg{width:20px;height:20px;transition:transform .25s}
+.back:hover{border-color:var(--gold);color:var(--gold)}
+.back:hover svg{transform:translateX(-3px)}
+.back:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.auth-page{position:relative}
+.auth-main{padding-top:84px}
+@media(min-width:960px){.auth-main{padding-top:28px}}
+/* Modal recuperar contraseña */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(5,12,24,.75);backdrop-filter:blur(4px)}
+.modal[hidden]{display:none}
+.modal-box{position:relative;width:100%;max-width:440px;background:var(--navy);border:1px solid var(--line);border-radius:24px;padding:clamp(22px,5vw,34px);box-shadow:0 24px 60px rgba(0,0,0,.5);animation:modalIn .25s ease}
+.modal-box h3{font-size:1.5rem;margin-bottom:6px;padding-right:36px}
+.modal-box .sub{margin-bottom:18px}
+.modal-x{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;border-radius:10px;background:none;color:var(--muted);font-size:1.8rem;line-height:1;cursor:pointer;transition:.25s}
+.modal-x:hover{color:var(--gold)}
+@keyframes modalIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.modal-box{animation:none}.back svg{transition:none}}

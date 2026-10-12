@@ -1,0 +1,22 @@
+/* Estilos de perfil.html (usa las variables de styles.css) */
+body.perfil{min-height:100dvh;background:radial-gradient(800px 500px at 90% 0%,rgba(212,175,55,.14),transparent 60%),linear-gradient(180deg,var(--navy),var(--night))}
+.brand small{display:block;font-size:.62rem;letter-spacing:.22em;color:var(--muted);font-weight:700;margin-top:3px}
+.pf-actions{display:flex;gap:10px}
+.pf-actions .btn{padding:9px 18px;font-size:.82rem}
+.pf-loading{padding:140px 20px;text-align:center;color:var(--muted);font-weight:700}
+.pf{padding:112px 0 64px}
+.pf-hero{display:flex;align-items:center;gap:20px;margin-bottom:32px}
+.avatar{flex:none;width:clamp(64px,14vw,88px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:var(--night);font-weight:900;font-size:clamp(1.6rem,6vw,2.4rem);border:3px solid var(--sand)}
+.eyebrow{color:var(--gold);font-weight:800;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+.pf-hero h1{font-size:clamp(1.7rem,6vw,2.8rem)}
+.pf-hero .lead{font-size:1rem;color:var(--muted)}
+.pf-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:24px}
+.stat,.pf-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px}
+.stat span{display:block;color:var(--muted);font-weight:700;font-size:.88rem}
+.stat b{font-size:2.2rem;font-weight:900;color:var(--white)}
+.pf-card h2{font-size:1.3rem;margin-bottom:18px}
+.pf-data{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));padding:0}
+.pf-data dt{color:var(--muted);font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pf-data dd{margin:2px 0 0;font-weight:700;font-size:1.05rem;overflow-wrap:anywhere}
+.pf-cta{margin-top:28px}
+@media(max-width:599px){.pf-hero{flex-direction:column;align-items:flex-start}.pf-cta{width:100%}.pf-actions .btn:first-child{display:none}}
